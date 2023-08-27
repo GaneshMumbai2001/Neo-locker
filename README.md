@@ -12,22 +12,21 @@ How to run:
 <br />
 
 First, run the development server:
-<br />
 
 ```bash
-<br />
+
 npm run dev
-<br />
+
 # or
-<br />
+
 yarn dev
-<br />
+
 # or
-<br />
+
 pnpm dev
-<br />
+
 ```
-<br />
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 
