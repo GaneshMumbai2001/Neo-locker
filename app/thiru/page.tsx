@@ -85,7 +85,7 @@ const Upload = () => {
               id="file"
               onChange={(e) => {
                 if (e && e.target && e.target.files) {
-                  setUpload(e.target.files[0]);
+                  setUpload(e?.target?.files[0]);
                 }
               }}
               
