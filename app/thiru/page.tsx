@@ -8,7 +8,8 @@ import { ethers } from "ethers";
 const Upload = () => {
   const [type, setType] = useState("");
   const [name, setName] = useState("");
-  const [upload, setUpload] = useState("");
+  const [upload, setUpload] = useState<File | null>(null);
+
 
   async function uploadFile() {
     const ipfsHash = "Hello"; // Calculate the actual IPFS hash here
