@@ -18,12 +18,11 @@ const Upload = () => {
     console.log(token);
   }
   const [isWalletConnected, setIsWalletConnected] = useState(false);
-  const [provider, setProvider] = useState(null);
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
 
   useEffect(() => {
-    // Check if the wallet is connected here
-    const checkWalletConnection = async () => {
-      if (window.ethereum) {
+    const checkWalletConnection = async (): Promise<void> => {
+      if (typeof window !== "undefined" && isEthereumAvailable(window)) {
         const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
 
         try {
@@ -39,8 +38,8 @@ const Upload = () => {
     checkWalletConnection();
   }, []);
 
-  const connectWallet = async () => {
-    if (window.ethereum) {
+  const connectWallet = async (): Promise<void> => {
+    if (typeof window !== "undefined" && isEthereumAvailable(window)) {
       try {
         await window.ethereum.request({ method: "eth_requestAccounts" });
         setIsWalletConnected(true);
@@ -49,6 +48,7 @@ const Upload = () => {
       }
     }
   };
+
 
 
   return (
@@ -83,7 +83,13 @@ const Upload = () => {
             <input
               type="file"
               id="file"
-              onChange={(e) => setUpload(e.target.files[0])}
+              onChange={(e) => {
+                if (e && e.target && e.target.files) {
+                  setUpload(e.target.files[0]);
+                }
+              }}
+              
+
               className="w-full border rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -110,3 +116,8 @@ const Upload = () => {
 };
 
 export default Upload;
+
+
+function isEthereumAvailable(window: Window & typeof globalThis): window is Window & typeof globalThis & { ethereum: any } {
+  return "ethereum" in window;
+}
