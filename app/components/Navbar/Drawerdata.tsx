@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Web3Provider } from '@ethersproject/providers'; // Correct import
+import { Web3Provider } from '@ethersproject/providers';
 import { ethers } from "ethers";
 
 interface NavigationItem {
@@ -14,46 +14,46 @@ const navigation: NavigationItem[] = [
     { name: 'Upload', href: '/thiru', current: false },
     { name: 'Verify', href: '#features-section', current: false },
     { name: 'FAQ', href: '#faq-section', current: false },
-]
+];
 
-function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(' ')
+function classNames(...classes: string[]): string {
+  return classes.filter(Boolean).join(' ');
 }
 
+const Data: React.FC = () => {
+  const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
 
-const Data = () => {
-    const [isWalletConnected, setIsWalletConnected] = useState(false);
-    const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
+  useEffect(() => {
+      const checkWalletConnection = async (): Promise<void> => {
+          if (typeof window !== "undefined" && isEthereumAvailable(window)) {
+              const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
   
-    useEffect(() => {
-      // Check if the wallet is connected here
-      const checkWalletConnection = async () => {
-        if (typeof window !== "undefined" && window.ethereum) {
-          const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
-  
-          try {
-            await ethProvider.getSigner().getAddress();
-            setProvider(ethProvider);
-            setIsWalletConnected(true);
-          } catch (error) {
-            setIsWalletConnected(false);
+              try {
+                  await ethProvider.getSigner().getAddress();
+                  setProvider(ethProvider);
+                  setIsWalletConnected(true);
+              } catch (error) {
+                  setIsWalletConnected(false);
+              }
           }
-        }
       };
-  
+
       checkWalletConnection();
-    }, []);
-  
-    const connectWallet = async () => {
-      if (typeof window !== "undefined" && window.ethereum) {
-        try {
-          await window.ethereum.request({ method: "eth_requestAccounts" });
-          setIsWalletConnected(true);
-        } catch (error) {
-          console.error("Error connecting wallet:", error);
-        }
+  }, []);
+
+  const connectWallet = async (): Promise<void> => {
+      if (typeof window !== "undefined" && isEthereumAvailable(window)) {
+          try {
+              await window.ethereum.request({ method: "eth_requestAccounts" });
+              setIsWalletConnected(true);
+          } catch (error) {
+              console.error("Error connecting wallet:", error);
+          }
       }
-    };
+  };
+
+
     return (
         <div className="rounded-md max-w-sm w-full">
             <div className="flex-1 space-y-4 py-1">
@@ -74,14 +74,14 @@ const Data = () => {
                         ))}
                         <div className="mt-4"></div>
                         <button
-          onClick={connectWallet}
-          className={`bg-navyblue w-full hover:text-white text-white border border-purple font-medium py-2 px-4 rounded ${
-            isWalletConnected ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
-          }`}
-          disabled={isWalletConnected}
-        >
-          {isWalletConnected ? "Connected" : "Connect Wallet"}
-        </button>
+                            onClick={connectWallet}
+                            className={`bg-navyblue w-full hover:text-white text-white border border-purple font-medium py-2 px-4 rounded ${
+                                isWalletConnected ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+                            }`}
+                            disabled={isWalletConnected}
+                        >
+                            {isWalletConnected ? "Connected" : "Connect Wallet"}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -90,3 +90,7 @@ const Data = () => {
 }
 
 export default Data;
+
+function isEthereumAvailable(window: Window & typeof globalThis): window is Window & typeof globalThis & { ethereum: any } {
+  return "ethereum" in window;
+}
